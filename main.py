@@ -1,4 +1,7 @@
 import random
+import threading
+
+import pyttsx3 as pt
 
 
 def main(name):
@@ -18,40 +21,39 @@ def main(name):
     ------------------
     英文与中文间隔一个空格, 不得出现前导空格与尾部空格
     """
-    wordsList=[]
-    success=0
-    failure=0
+    wordsList = []
+    success = 0
+    failure = 0
 
-    with open("./out1.txt","r") as f: #out.txt是EnglishLevelTwo.txt经过几个函数的处理后, 格式良好的词汇表文件
-        l=f.readlines()
+    with open("./out1.txt", "r", encoding="UTF-8") as f:  # out.txt是EnglishLevelTwo.txt经过几个函数的处理后, 格式良好的词汇表文件
+        l = f.readlines()
         for x in l:
-            kv=x.split(" ")
-            wordsList.append((kv[0],kv[1]))
+            kv = x.split(" ")
+            wordsList.append((kv[0], kv[1]))
 
     print("根据中文意思写出英文单词")
     print("输入 '=' 以退出")
 
-
-
-    r=random.randint
+    r = random.randint
     while True:
-        listItem=wordsList[r(0,len(wordsList)-1)]
-        inputStr=input(listItem[1]+"提示:"+(listItem[0])[0:3]+"\n")
-        if inputStr=="=":
+        listItem = wordsList[r(0, len(wordsList) - 1)]
+
+        sound = threading.Thread(target=(lambda x: pt.speak(x)), args=(listItem[0],))
+        sound.start()
+        inputStr = input(listItem[1] + "提示:" + (listItem[0])[0:3] + "\n")
+        if inputStr == "=":
             break
-        elif inputStr==listItem[0]:
+        elif inputStr == listItem[0]:
             print("+ Yeeeees~~~")
-            success+=1
+            success += 1
         else:
             print("- Noooooooo")
-            failure+=1
+            failure += 1
             print(f"Is {listItem[0]}")
 
-    successRate=0 if success==0 else round(success/(success+failure)*100,1)
+    successRate = 0 if success == 0 else round(success / (success + failure) * 100, 1)
 
-    print(f"共练习:{success+failure}次,成功率:{successRate}%")
-
-
+    print(f"共练习:{success + failure}次,成功率:{successRate}%")
 
 
 #
@@ -80,10 +82,3 @@ def main(name):
 
 if __name__ == '__main__':
     main('PyCharm')
-
-
-
-
-
-
-
